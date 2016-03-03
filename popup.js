@@ -21,65 +21,110 @@
 //  });
 //});
 
-
-$(document).ready( function () {
-  chrome.tabs.query({
-        // gets the window the user can currently see
-        active: true,
-        currentWindow: true
-      },
-      function (tabs) {
-        chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT,function (dataurl) {
-          var image = new Image();
-
-
-
-              $('.imageLink').append("<a href='" + dataurl + "'>" + tabs[0].url + "</a>");
-            }
-        );
-      }
-  );
-
-});
-function getTabUrl(){
-  chrome.tabs.getSelected(null, function (tab){
-    return tab.url;
-  })
-};
-
-function submitform(){
-  var postdata = $('#login-form').serialize();
-  var image = document.getElementById('imageLink').value;
-  //var url = getTabUrl();
-  var fd = new FormData();
-  fd.append("image", image);
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:18527/snippets/extensionview/?Id=", false);
-  xhr.send(fd);
-
+//$(document).ready( function () {
+//  chrome.tabs.query({
+//
+//        active: true,
+//        currentWindow: true
+//
+//      },
+//      function (tabs) {
+//        chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT,function (dataurl) {
+//
+//          //submitform(dataurl);
+//          //$('.imageLink').append("<a href='" + dataurl + "'>" + tabs[0].url + "</a>");
+//            //var image = dataurl.value();
+//
+//           blobImage = dataURItoBlob(dataurl);
+//            var fd = new FormData();
+//            fd.append("image", blobImage);
+//            fd.append("url",tabs[0].url);
+//            var xhr = new XMLHttpRequest();
+//            //xhr.open("POST", "http://localhost:18527/snippets/extensionview/", false);
+//            //xhr.send(fd);
+//            console.log("sent");
+//
+//
+//            page = document;
+//            var form = page.createElement('form');
+//
+//            xhr.open("POST", "http://localhost:18527/snippets/extensionview/", false);
+//            xhr.onload = function(){
+//                form.action = 'http://localhost:18527/snippets/extensionview/';
+//                form.method = 'post';
+//            };
+//            xhr.send(fd);
+//            form.submit();
+//            }
+//        )
+//      }
+//  );
+//
+//});
+function dataURItoBlob(dataURI) {
+    var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for(var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
 }
+
+
 
   document.addEventListener('DOMContentLoaded', function () {
     var checkPageButton = document.getElementById('checkPage');
     checkPageButton.addEventListener('click', function () {
 
-      chrome.tabs.getSelected(null, function (tab) {
-        page = document;
+        chrome.tabs.query({
+
+                active: true,
+                currentWindow: true
+
+            },
+            function (tabs) {
+                chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT,function (dataurl) {
+
+                    //submitform(dataurl);
+                    //$('.imageLink').append("<a href='" + dataurl + "'>" + tabs[0].url + "</a>");
+                    //var image = dataurl.value();
+
+                    blobImage = dataURItoBlob(dataurl);
+                    var fd = new FormData();
+                    fd.append("image", blobImage);
+                    fd.append("url",tabs[0].url);
+                    var xhr = new XMLHttpRequest();
+                    //xhr.open("POST", "http://localhost:18527/snippets/extensionview/", false);
+                    //xhr.send(fd);
+                    console.log("sent");
 
 
-        var form = page.createElement('form');
-        form.action = 'http://localhost:18527/snippets/extensionview/?Id=' + tab.url;
-        form.method = 'post';
-        //use callback
-        //var input = page.createElement('input');
-        //input.type = 'hidden';
-        //input.name = 'url';
-        //input.value = tab.url;
-        //form.appendChild(input);
-        //page.body.appendChild(form);
-        form.submit();
-      });
+                    page = document;
+                    var form = page.createElement('form');
+
+                    /*xhr.open("POST", "http://localhost:18527/snippets/extensionview/", false);
+                    xhr.onreadystatechange = function(){
+
+                    };
+                    xhr.send(fd);*/
+                    form.action = 'http://localhost:18527/snippets/extensionview/';
+                    form.method = 'post';
+                    var inputElement = document.createElement('input');
+                    inputElement.setAttribute('type', 'text');
+                    inputElement.setAttribute('name', "imageData");
+                    inputElement.setAttribute('value', JSON.stringify(dataurl));
+
+
+                    //inputElement.setAttribute('type', 'text');
+                    //inputElement.setAttribute('name', "url");
+                    //inputElement.setAttribute('value', tabs[0].url);
+
+                    form.appendChild(inputElement);
+
+                    form.submit();
+                })
+            }
+        );
     }, false);
   }, false);
 
