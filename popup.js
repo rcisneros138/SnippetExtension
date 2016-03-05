@@ -83,7 +83,7 @@ function dataURItoBlob(dataURI) {
 
             },
             function (tabs) {
-                chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT,function (dataurl) {
+                chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT,{format:"jpeg"},function (dataurl) {
 
                     //submitform(dataurl);
                     //$('.imageLink').append("<a href='" + dataurl + "'>" + tabs[0].url + "</a>");
@@ -113,6 +113,10 @@ function dataURItoBlob(dataURI) {
                     inputElement.setAttribute('type', 'text');
                     inputElement.setAttribute('name', "imageData");
                     inputElement.setAttribute('value', JSON.stringify(dataurl));
+                    var inputElementUrl = document.createElement('input');
+                    inputElementUrl.setAttribute('type', 'text');
+                    inputElementUrl.setAttribute('name', "url");
+                    inputElementUrl.setAttribute('value', tabs[0].url);
 
 
                     //inputElement.setAttribute('type', 'text');
@@ -120,6 +124,7 @@ function dataURItoBlob(dataURI) {
                     //inputElement.setAttribute('value', tabs[0].url);
 
                     form.appendChild(inputElement);
+                    form.appendChild(inputElementUrl);
 
                     form.submit();
                 })
